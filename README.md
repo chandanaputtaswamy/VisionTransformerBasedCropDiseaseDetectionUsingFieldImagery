@@ -4,6 +4,24 @@ AgriVision is an end-to-end full-stack artificial intelligence application for d
 
 ---
 
+## ⚡ Quick Start (Single Command)
+
+If your server or runtime disconnects, you can restart both the Flask Backend and React Frontend concurrently with **one single command**:
+
+### Option 1: Terminal Command
+```bash
+npm start
+```
+
+### Option 2: Windows Double-Click Launcher
+Double-click **`start.bat`** in the project folder!
+
+Both options will automatically start:
+- 🐍 **Flask Backend API**: `http://localhost:5000`
+- ⚛️ **React Web Frontend**: `http://localhost:5173`
+
+---
+
 ## 🌟 Key Features
 
 - **PyTorch ViT-Small/16 Model (`best_vit_crop_disease.pth`)**:
@@ -33,58 +51,19 @@ AgriVision is an end-to-end full-stack artificial intelligence application for d
 
 ```
 frontendNbackend/
+├── start.bat                      # One-click launcher for Windows
+├── package.json                   # Root package with 'npm start' concurrent script
 ├── best_vit_crop_disease.pth      # PyTorch ViT Model Checkpoint (86.8 MB)
 ├── backend/
 │   ├── app.py                     # Flask REST API server (Port 5000)
 │   ├── model_service.py           # PyTorch ViT inference engine & preprocessing
 │   ├── disease_database.py        # 107 crop diseases knowledge base
-│   ├── sample_images/             # Pre-built sample field images
-│   └── create_samples.py
+│   └── sample_images/             # Pre-built sample field images
 ├── frontend/                      # React + Vite application (Port 5173)
 │   ├── src/
 │   │   ├── App.jsx
 │   │   ├── index.css              # Custom Glassmorphic design system
-│   │   ├── components/
-│   │   │   ├── Header.jsx         # Navigation bar & status pill
-│   │   │   ├── ImageUploader.jsx   # Drag & drop, camera, sample pills
-│   │   │   ├── DiagnosticCard.jsx # Diagnosis summary & confidence meter
-│   │   │   ├── ProbabilityChart.jsx# Top-5 prediction confidence chart
-│   │   │   ├── DiseaseDetailTabs.jsx# Symptoms, remedies, chemicals, prevention
-│   │   │   ├── DiseaseCatalog.jsx # 107 classes searchable database
-│   │   │   ├── ScanHistory.jsx    # Browser local history audit log
-│   │   │   └── Footer.jsx
-│   │   └── services/
-│   │       └── api.js             # API helper
-│   ├── package.json
-│   └── vite.config.js
+│   │   └── components/
+│   └── package.json
 └── README.md
 ```
-
----
-
-## 🚀 How to Run the Project
-
-### 1. Start the Flask Backend Server
-```bash
-cd backend
-python app.py
-```
-*The backend server will start on **`http://localhost:5000`** and load `best_vit_crop_disease.pth`.*
-
-### 2. Start the React Frontend Web Application
-```bash
-cd frontend
-npm run dev
-```
-*The React frontend will start on **`http://localhost:5173`**.*
-
----
-
-## 📊 Model Information
-
-- **Architecture**: `vit_small_patch16_224` (timm)
-- **Patch Size**: 16x16
-- **Embedding Dimension**: 384
-- **Input Resolution**: 224 x 224 pixels
-- **Total Trained Classes**: 107
-- **Validation Accuracy**: 95.17%

@@ -1,0 +1,14 @@
+{
+  "name": "vision-transformer-crop-disease-detection",
+  "version": "1.0.0",
+  "description": "Vision Transformer Based Crop Disease Detection Using Field Imagery",
+  "main": "backend/app.py",
+  "scripts": {
+    "start": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,emerald\" \"python backend/app.py\" \"npm run dev --prefix frontend\"",
+    "backend": "python backend/app.py",
+    "frontend": "npm run dev --prefix frontend"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  }
+}
