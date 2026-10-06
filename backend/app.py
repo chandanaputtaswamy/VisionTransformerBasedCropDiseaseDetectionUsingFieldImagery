@@ -4,12 +4,14 @@ import os
 # Ensure site-packages path
 sys.path.append(r"C:\Users\ashwi\AppData\Roaming\Python\Python312\site-packages")
 
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify, send_from_directory, redirect
 from flask_cors import CORS
 from model_service import ViTCropClassifier
 from disease_database import parse_class_name, get_disease_details
 
-app = Flask(__name__)
+DIST_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "frontend", "dist"))
+
+app = Flask(__name__, static_folder=DIST_DIR if os.path.exists(DIST_DIR) else None)
 CORS(app)  # Enable Cross-Origin Resource Sharing for React frontend
 
 # Paths
@@ -22,6 +24,24 @@ try:
 except Exception as e:
     print(f"Error loading model: {e}")
     classifier = None
+
+
+@app.route("/", methods=["GET"])
+def index():
+    if os.path.exists(DIST_DIR) and os.path.exists(os.path.join(DIST_DIR, "index.html")):
+        return send_from_directory(DIST_DIR, "index.html")
+        
+    return jsonify({
+        "service": "AgriVision Vision Transformer (ViT) API",
+        "status": "online" if classifier else "degraded",
+        "frontend_url": "http://localhost:5173",
+        "endpoints": {
+            "health": "/api/health",
+            "classes": "/api/classes",
+            "sample_images": "/api/sample-images",
+            "predict": "/api/predict (POST)"
+        }
+    })
 
 
 @app.route("/api/health", methods=["GET"])
@@ -119,6 +139,18 @@ def predict():
     except Exception as e:
         print(f"Prediction exception: {e}")
         return jsonify({"error": f"Failed to process image: {str(e)}"}), 500
+
+
+# Serve static assets or fallback to SPA index.html for any other non-API routes
+@app.route("/<path:path>", methods=["GET"])
+def serve_static(path):
+    if os.path.exists(DIST_DIR):
+        file_path = os.path.join(DIST_DIR, path)
+        if os.path.exists(file_path):
+            return send_from_directory(DIST_DIR, path)
+        elif os.path.exists(os.path.join(DIST_DIR, "index.html")):
+            return send_from_directory(DIST_DIR, "index.html")
+    return redirect("/")
 
 
 if __name__ == "__main__":
