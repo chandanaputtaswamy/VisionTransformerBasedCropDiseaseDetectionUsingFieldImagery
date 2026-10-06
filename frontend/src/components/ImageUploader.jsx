@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { UploadCloud, Camera, Image as ImageIcon, Sparkles, X, RefreshCw, CheckCircle2 } from 'lucide-react';
 import { predictImage, predictSample } from '../services/api';
 
@@ -14,6 +14,24 @@ export default function ImageUploader({ onAnalysisComplete, samples }) {
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
+
+  // Bind camera stream to video element whenever camera becomes active and video element is mounted
+  useEffect(() => {
+    if (isCameraActive && videoRef.current && streamRef.current) {
+      const videoEl = videoRef.current;
+      videoEl.srcObject = streamRef.current;
+      videoEl.onloadedmetadata = () => {
+        videoEl.play().catch(err => console.log('Camera video play error:', err));
+      };
+    }
+  }, [isCameraActive]);
+
+  // Clean up camera stream on unmount
+  useEffect(() => {
+    return () => {
+      stopCamera();
+    };
+  }, []);
 
   // Handle Drag & Drop
   const handleDrop = (e) => {
@@ -41,19 +59,26 @@ export default function ImageUploader({ onAnalysisComplete, samples }) {
     setSelectedImage(URL.createObjectURL(file));
   };
 
-  // Camera Handling
+  // Camera Handling with fallback constraints
   const startCamera = async () => {
     try {
       setErrorMsg(null);
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+      let stream;
+      try {
+        // Try requesting rear environment camera first
+        stream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: { ideal: 'environment' }, width: { ideal: 1280 }, height: { ideal: 720 } }
+        });
+      } catch (e) {
+        // Fallback to generic camera constraint (for laptop webcams)
+        stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      }
+
       streamRef.current = stream;
       setIsCameraActive(true);
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-      }
     } catch (err) {
       console.error('Camera access error:', err);
-      setErrorMsg('Unable to access camera. Please allow camera permissions or upload an image file.');
+      setErrorMsg('Unable to access camera. Please grant camera permissions in your browser or select an image file.');
     }
   };
 
@@ -67,11 +92,12 @@ export default function ImageUploader({ onAnalysisComplete, samples }) {
 
   const capturePhoto = () => {
     if (!videoRef.current) return;
+    const video = videoRef.current;
     const canvas = document.createElement('canvas');
-    canvas.width = videoRef.current.videoWidth || 640;
-    canvas.height = videoRef.current.videoHeight || 480;
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
     const ctx = canvas.getContext('2d');
-    ctx.drawImage(videoRef.current, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     
     canvas.toBlob((blob) => {
       stopCamera();
@@ -158,8 +184,14 @@ export default function ImageUploader({ onAnalysisComplete, samples }) {
 
       {/* Camera Live View Modal / Area */}
       {isCameraActive ? (
-        <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', background: '#000', height: '360px' }}>
-          <video ref={videoRef} autoPlay playsInline style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', background: '#000', height: '380px' }}>
+          <video
+            ref={videoRef}
+            autoPlay
+            muted
+            playsInline
+            style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+          />
           <div className="scan-line" />
           <div style={{
             position: 'absolute',
@@ -170,10 +202,10 @@ export default function ImageUploader({ onAnalysisComplete, samples }) {
             gap: '12px',
             zIndex: 10
           }}>
-            <button onClick={capturePhoto} className="btn-primary">
+            <button onClick={capturePhoto} className="btn-primary" style={{ padding: '12px 24px' }}>
               <Camera size={18} /> Capture Leaf Photo
             </button>
-            <button onClick={stopCamera} className="btn-secondary" style={{ background: 'rgba(0,0,0,0.7)' }}>
+            <button onClick={stopCamera} className="btn-secondary" style={{ background: 'rgba(0,0,0,0.8)', padding: '12px 20px' }}>
               Cancel
             </button>
           </div>
