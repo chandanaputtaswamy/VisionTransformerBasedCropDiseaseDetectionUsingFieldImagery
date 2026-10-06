@@ -4,8 +4,8 @@
   "description": "Vision Transformer Based Crop Disease Detection Using Field Imagery",
   "main": "backend/app.py",
   "scripts": {
-    "start": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,emerald\" \"python backend/app.py\" \"npm run dev --prefix frontend\"",
-    "backend": "python backend/app.py",
+    "start": "concurrently -n \"BACKEND,FRONTEND\" -c \"cyan,green\" \"C:\\\\Python312\\\\python.exe backend/app.py\" \"npm run dev --prefix frontend\"",
+    "backend": "C:\\Python312\\python.exe backend/app.py",
     "frontend": "npm run dev --prefix frontend"
   },
   "devDependencies": {
