@@ -1,16 +1,24 @@
-# Node dependencies & build
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environment variables and secrets
+.env
+.env.*
+
+# Frontend dependencies and build files
 node_modules/
-frontend/node_modules/
 frontend/dist/
+frontend/build/
 frontend/.vite/
 
-# Python bytecode & cache
-__pycache__/
-*.pyc
-*.pyo
-
-# IDE & OS
+# IDE
 .vscode/
 .idea/
+
+# Operating system files
 .DS_Store
 Thumbs.db

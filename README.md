@@ -8,6 +8,22 @@ AgriVision is an end-to-end full-stack artificial intelligence application for d
 
 If your server or runtime disconnects, you can restart both the Flask Backend and React Frontend concurrently with **one single command**:
 
+### First-time setup (Windows PowerShell)
+```powershell
+python -m venv backend\venv
+backend\venv\Scripts\python.exe -m pip install -r requirements.txt
+npm install
+npm --prefix frontend install
+```
+
+For terminal launches, activate the Python environment in each new terminal before running `npm start`:
+```powershell
+.\backend\venv\Scripts\Activate.ps1
+npm start
+```
+
+The `start.bat` launcher activates this environment automatically.
+
 ### Option 1: Terminal Command
 ```bash
 npm start

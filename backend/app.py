@@ -1,8 +1,4 @@
-import sys
 import os
-
-# Ensure site-packages path
-sys.path.append(r"C:\Users\ashwi\AppData\Roaming\Python\Python312\site-packages")
 
 from flask import Flask, request, jsonify, send_from_directory, render_template_string
 from flask_cors import CORS

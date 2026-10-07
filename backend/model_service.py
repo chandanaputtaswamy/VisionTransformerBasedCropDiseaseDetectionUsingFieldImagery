@@ -1,11 +1,7 @@
-import sys
 import os
 import io
 import time
 from PIL import Image
-
-# Ensure user site packages are in path for PyTorch and timm
-sys.path.append(r"C:\Users\ashwi\AppData\Roaming\Python\Python312\site-packages")
 
 import torch
 from torchvision import transforms
